@@ -23,29 +23,30 @@
 
 
 .macro pow dest, base, exp
+    // Check for special case of exp=0
+    cmp \exp, #0
+    bne 1f              // if (exp != 0) -> goto multiplication loop
 
-    mov \dest, \base    // update return value with base value
+    // Set dest to 1, return
+    mov \dest, #1
+    b 3f
 
-    // if this is NOT a special case (exp = 0/1) goto mul loop
-    cmp \exp, #2
-    bge 1f              // if (exp >= 2) -> goto multiplication loop
-
-    // else (exp < 2), handle special cases
-    cmp \exp, #0         // if (exp == 0) -> return 1
-    moveq \dest, #1
-                        // else exp must equal 1 if we get here and
-    b 2f                // as dest is already set to base we can exit
+    // pre mul. loop setup
+    1:
+    mov \dest, \base        // dest is at least equal to the base
 
     // Multiplication Loop
-    1:
-        mul \dest, \base
+    2:
+        // Check exp, if after decrementing exp = 0 we are done
         sub \exp, #1
-        cmp \exp, #2
-        blt 2f              // if (exp < 2) -> goto done
-        b 1b                // else, loop and mul. again
+        cmp \exp, #0
+        beq 3f              // done
+
+        mul \dest, \base
+        b 2b                // repeat
 
     // done
-    2:
+    3:
 
 .endm
 
