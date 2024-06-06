@@ -1,6 +1,6 @@
 /*
     ITOA (Integer to Ascii) program
-    - This program convert the integer stored in the constant 'basenum' to an ascii
+    - This program converts the integer stored in the constant 'basenum' to an ascii
       string, that is then written to stdout.
 
     - This problem was inspired/taken from this website:
@@ -77,7 +77,7 @@ _start:
         cmp r1, r5
         blt loop_2_done     // if (# < (9 * 10^x)) -> goto loop_2_done
                             // else -> go on below
-        add r3, #1          // inc x
+        add r3, #1          // inc y
         b loop_2            // repeat
         
 
@@ -87,7 +87,7 @@ _start:
                             // so sub 1 to compensate
 
         // re-compute y * 10^x with correct y value from above
-        // TODO: could probably store previous (y * 10^x) value from above so we
+        // TODO: could probably store previous (10^x) value from above so we
         //       don't have to recompute it again here
 
         //mov r6, #10         // base = 10
