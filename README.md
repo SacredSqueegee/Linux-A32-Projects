@@ -1,5 +1,7 @@
 # A Quick Overview
 
+Note that the organizations of this project will likely change in the future. I think the plan will be to have a sub-directory for each project in the root directory eventually.
+
 ## Requirments / Assumptions
 
 This makefile uses qemu to run the program and gdb-multiarch to debug it.
