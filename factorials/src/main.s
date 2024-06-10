@@ -16,7 +16,6 @@ _start:
 
 // Display our converted number, then exit
 done:
-    // WARN: Need to figure out how output is going to work
     write outstr
 
     // Print newline char
