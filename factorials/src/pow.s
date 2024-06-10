@@ -18,7 +18,6 @@
 
 .global pow
 pow:
-    // TODO: function prolog
     push {fp}               // Save old frame pointer
     add fp, sp, #0          // Set up new frame pointer location
     push {r2}               // Save r2 as it is not being as a parameter but is need
@@ -50,7 +49,6 @@ pow:
 
 done:
 exit:
-    // TODO: Function epilog
     pop {r2}                // Restore r2
     add sp, fp, #0          // Re-adjust sp to original location
     pop {fp}                // restore original frame pointer
