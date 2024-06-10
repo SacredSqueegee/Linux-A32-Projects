@@ -31,7 +31,7 @@ NOTE: Future Expansions:
 */
 
 // WARN: need to convert this pow macro to a function
-.include "pow.s"
+//.include "pow.s"
 
 .global itoa
 itoa:
@@ -60,7 +60,16 @@ itoa:
         // compute (9 * 10^x)
         mov r6, #10         // base = 10
         mov r7, r2          // exp = x
-        pow r5, r6, r7      // r5 = 10 ^ x
+
+        //pow r5, r6, r7      // r5 = 10 ^ x
+        // WARN: ugly use of pow, redo itoa() to accomidate pow being a function
+        //       instead of a macro now.
+            push {r0-r1}
+            mov r0, r6
+            mov r1, r7
+            bl pow
+            mov r5, r0
+            pop {r0-r1}
 
         mov r6, #9
         mul r5, r6          // r5 = (10^x) * 9
@@ -84,7 +93,16 @@ itoa:
         //mov r6, #10         // base = 10
         // r6 set at loop_1_done, and is not modified
         mov r7, r2          // exp = x
-        pow r5, r6, r7      // r5 = 10 ^ x
+        //pow r5, r6, r7      // r5 = 10 ^ x
+
+        // WARN: ugly use of pow, redo itoa() to accomidate pow being a function
+        //       instead of a macro now.
+            push {r0-r1}
+            mov r0, r6
+            mov r1, r7
+            bl pow
+            mov r5, r0
+            pop {r0-r1}
 
         mul r5, r3          // r5 = (10^x) * y
 
@@ -108,7 +126,16 @@ itoa:
         //mov r6, #10         // base = 10
         // r6 set at loop_1_done, and is not modified
         mov r7, r2          // exp = x
-        pow r5, r6, r7      // r5 = 10 ^ x
+
+        //pow r5, r6, r7      // r5 = 10 ^ x
+        // WARN: ugly use of pow, redo itoa() to accomidate pow being a function
+        //       instead of a macro now.
+            push {r0-r1}
+            mov r0, r6
+            mov r1, r7
+            bl pow
+            mov r5, r0
+            pop {r0-r1}
 
         mul r5, r3          // r5 = (10^x) * y
 
