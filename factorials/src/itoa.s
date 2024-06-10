@@ -4,11 +4,21 @@
 //      Converts a given integer to its ascii representation
 //
 // Parameters:
-//      r0
+//      r0  -> address to buffer to write the converted ascii
+//             characters to. It is the Callee's responsibility
+//             to make sure that the buffer is big enough to
+//             write the whole converted integer to. Note: the
+//             largest buffer needed is 11-bytes (10-bytes for 
+//             the characters and 1-byte for the null termination)
+//      r1  -> 32-bit unsigned word to convert to ascii
 //
+// Returns:
+//      - This function returns the ascii conversion of the uint_32
+//        in r0 inside the buffer pointed to by r1.
+// 
 
 /*
-Future Expansions:
+NOTE: Future Expansions:
     - Convert to library function for later use or macro
     - Add error checking
     - Add test cases
@@ -25,11 +35,32 @@ Future Expansions:
 
 .global itoa
 itoa:
+    // TODO: setup stack frame
 
-    ldr r0, =outstr         // r0 = outstr start addr
+    // TODO: save used registers
+
+    // This is not a leaf function as we are calling more functions inside. So, we
+    // need to setup the prolog accordingly
+    push {fp, lr}           // Save FP and return addr on stack
+    add fp, sp, #0          // Set the Frame Pointer(r11) to start of this functions frame
+    sub sp, sp, #16         // Reserve 16-bytes of stack space for local vars/buffers
+                            // SP must be 4-byte aligned at all times. At public interfaces
+                            // SP must be two times the pointer size, i.e. 8-byte aligned
+
+    push {r2-r7}            // Save 6 registers -> 48-bytes, to the stack that will be modified
+
+    
+
+    // WARN: Need to figure out input parameters
+    //ldr r0, =outstr         // r0 = outstr start addr
     // WARN: Need to fix organization of register parameters
     //       right now r1 is the input number
-    ldr r1, =basenum        // r1 = #
+    //ldr r1, =basenum        // r1 = #
+
+    //mov r4, r0              
+    //mov r0, r1
+    //mov r1, r4              // exchange r0, r1
+
     mov r2, #0              // r2 = x = 0
                             // r3 = y
 
@@ -114,14 +145,19 @@ itoa:
 // Display our converted number, then exit
 done:
     // WARN: Need to figure out how output is going to work
-    write outstr
+    //write outstr
 
     // Print newline char
-    ldr r0, =outstr         // Need to reload outstr as we have been incrementing it
-    mov r1, #0x000a         // r1 = '\0', '\n'; gets stored in memroy as -> '\n', '\0'
-    strh r1, [r0]           // load halfword 0x000a into outstr
-    write outstr
+    //ldr r0, =outstr         // Need to reload outstr as we have been incrementing it
+    //mov r1, #0x000a         // r1 = '\0', '\n'; gets stored in memroy as -> '\n', '\0'
+    //strh r1, [r0]           // load halfword 0x000a into outstr
+    //write outstr
 
 exit:
-    // WARN: do return stuff here...
+    // Function epilog
+    pop {r2-r7}             // Restore our 6 registers we saved earlier
+    sub sp, fp, #0          // Move stack pointer to original position before function
+    pop {fp, pc}            // Restore frame pointer and move lr to pc to exit function
+
+
 

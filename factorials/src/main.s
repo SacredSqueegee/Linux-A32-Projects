@@ -1,14 +1,30 @@
 .section .text
+// ================================================================================
+.include "write.s"
+
+
+// input number 
+.equ    basenum, 209867295
+
 
 .global _start
 _start:
 
-print_hello_world:
-    mov R0, #1                      @ 1 = stdout
-    ldr R1, =hello_world            @ str pointer
-    mov R2, #hello_world_size       @ str len
-    mov R7, #4                      @ linux write syscall
-    svc 0                           @ software interrupt call write
+    ldr r0, =outstr
+    ldr r1, =basenum
+    bl itoa
+
+// Display our converted number, then exit
+done:
+    // WARN: Need to figure out how output is going to work
+    write outstr
+
+    // Print newline char
+    ldr r0, =outstr         // Need to reload outstr as it is not preserved
+    mov r1, #0x000a         // r1 = '\0', '\n'; gets stored in memroy as -> '\n', '\0'
+    strh r1, [r0]           // load halfword 0x000a into outstr
+    write outstr
+    
 
 exit:
     mov R0, #0                      @ return code
@@ -16,6 +32,7 @@ exit:
     svc 0                           @ software interrupt call exit
 
 .section .data
-hello_world:    .ascii "Hello World!\n"
-                .set hello_world_size, .-hello_world    // Set assembler immediate
+// ================================================================================
+outstr:     .fill 11        @ the max output size is 10 digits 
+                            @ 11 for line ending 
 
