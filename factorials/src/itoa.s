@@ -43,6 +43,8 @@ itoa:
                             // SP must be 4-byte aligned at all times. At public interfaces
                             // SP must be two times the pointer size, i.e. 8-byte aligned
 
+    str r0, [fp, #-4]       // Store output buffer address on stack as local var
+
 
     // Prepare for conversion
     push {r2-r7}            // Save 6 registers -> 48-bytes, to the stack that will be modified
@@ -144,7 +146,11 @@ itoa:
 
         // Store computed 'y' value as ascii char to outstr
         add r3, #0x30       // convert base-10 to ascii
-        strb r3, [r0], #1   // Save char to outstr, inc to next str location
+        //strb r3, [r0], #1   // Save char to outstr, inc to next str location
+        testing:
+        ldr r0, [fp, #-4]
+        strb r3, [r0], #1
+        str r0, [fp, #-4]
 
         // check if we are done, if not -> prepare for next loop and repeate
         sub r2, #1          // dec x
