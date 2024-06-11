@@ -30,8 +30,13 @@ NOTE: Future Expansions:
           surley there is a better way?
 */
 
-// WARN: need to convert this pow macro to a function
-//.include "pow.s"
+// NOTE: Internal register and stack space use
+//  r4 -> #
+//  r5 -> x
+//  r6 -> y
+//  r7 -> temp
+//  [fp, #-4]   -> output buffer address
+//
 
 .global itoa
 itoa:
@@ -46,15 +51,11 @@ itoa:
     str r0, [fp, #-4]       // Store output buffer address on stack as local var
     mov r4, r1              // r4 = #
 
-
     // Prepare for conversion
     push {r2-r7}            // Save 6 registers -> 48-bytes, to the stack that will be modified
     mov r5, #0              // r5 = x = 0
                             // r6 = y
 
-
-    // TODO: use a different register for doing our 'r5 = (10^x) * 9' operation
-    //       so that we can set r6 constant above and not have to reload it later
 
     // Find x so that [# <= (9 * 10^x)]
     // We only need to do this once as we just need the largest 'x'. then
@@ -64,7 +65,6 @@ itoa:
         mov r0, #10         // base = 10
         mov r1, r5          // exp = x
         bl pow              // 10^x
-
         mov r1, #9
         mul r0, r1          // r0 = (10^x) * 9
 
@@ -104,27 +104,22 @@ itoa:
         sub r6, #1          // When loop_2 finishes we overshoot the number by 1
                             // so sub 1 to compensate
 
-        // update # to: # - (y * 10^x)
-        sub r4, r7
+        sub r4, r7          // update # to: # - (y * 10^x)
+
+        add r6, #0x30       // convert base-10 to ascii
 
         // Store computed 'y' value as ascii char to outstr
-        add r6, #0x30       // convert base-10 to ascii
-        //strb r3, [r0], #1   // Save char to outstr, inc to next str location
-        testing:
-        ldr r0, [fp, #-4]
-        strb r6, [r0], #1
-        str r0, [fp, #-4]
+        ldr r0, [fp, #-4]   // r0 = addr of output buffer
+        strb r6, [r0], #1   // store converted digit to output buffer
+        str r0, [fp, #-4]   // update output buffer pointer to the new incremented one
 
         // check if we are done, if not -> prepare for next loop and repeate
         sub r5, #1          // dec x
             cmp r5, #0
-            blt done        // if x < 0 -> goto done
+            blt exit        // if x < 0 -> goto exit
         b loop_1_done       // goto loop_t
 
 
-// NOTE: Leaving done label below just in case we want to do something in the future before
-//       exiting the function
-done:
 exit:
     // Function epilog
     pop {r2-r7}             // Restore our 6 registers we saved earlier
