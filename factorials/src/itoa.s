@@ -43,7 +43,7 @@ itoa:
     // This is not a leaf function as we are calling more functions inside. So, we
     // need to setup the prolog accordingly
     push {fp, lr}           // Save FP and return addr on stack
-    add fp, sp, #0          // Set the Frame Pointer(r11) to start of this functions frame
+    mov fp, sp              // Set the Frame Pointer(r11) to start of this functions frame
     sub sp, sp, #16         // Reserve 16-bytes of stack space for local vars/buffers
                             // SP must be 4-byte aligned at all times. At public interfaces
                             // SP must be two times the pointer size, i.e. 8-byte aligned
@@ -123,6 +123,6 @@ itoa:
 exit:
     // Function epilog
     pop {r2-r7}             // Restore our 6 registers we saved earlier
-    sub sp, fp, #0          // Move stack pointer to original position before function
+    mov sp, fp              // Move stack pointer to original position before function
     pop {fp, pc}            // Restore frame pointer and move lr to pc to exit function
 

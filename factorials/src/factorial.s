@@ -14,7 +14,7 @@
 factorial:
     // prologue
     push {fp, lr}
-    add fp, sp, #0
+    mov fp, sp
 
     // Base case
     cmp r0, #0          // if input == 0
@@ -33,6 +33,6 @@ factorial:
 
 exit:
     // epilogue
-    sub sp, fp, #0
+    mov sp, fp
     pop {fp, pc}
 

@@ -19,10 +19,9 @@
 .global pow
 pow:
     push {fp}               // Save old frame pointer
-    add fp, sp, #0          // Set up new frame pointer location
+    mov fp, sp              // Set up new frame pointer location
     push {r2}               // Save r2 as it is not being as a parameter but is need
                             // as a scratch register
-
 
     // Check for special case of exp=0
     cmp r1, #0
@@ -50,7 +49,7 @@ pow:
 done:
 exit:
     pop {r2}                // Restore r2
-    add sp, fp, #0          // Re-adjust sp to original location
+    mov sp, fp              // Re-adjust sp to original location
     pop {fp}                // restore original frame pointer
     bx lr                   // Jump back to callee via LR register
 
