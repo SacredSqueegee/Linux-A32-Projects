@@ -8,7 +8,6 @@
 
 .section .text
 
-.include "write.s"
 
 .global _start
 _start:
@@ -43,12 +42,9 @@ done:
     mov r1, r6
     bl itoa
 
-    // Write our answer and newline to terminal
-    write outstr
-
-    mov r0, #0x000a             
-    strh r0, [r5]               // write '\n', '\0' to outstr
-    write outstr                // write the new line
+    // Write our answer to terminal
+    mov r0, r5
+    bl writeln
 
 
 exit:
