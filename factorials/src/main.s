@@ -4,18 +4,21 @@
 
 
 // input number 
-.equ    basenum, 209867295
+.equ    input, 9
 
 
 .global _start
 _start:
 
-    ldr r0, =outstr
-    ldr r1, =basenum
+    ldr r0, =#input
+    bl factorial
+
+    // Convert answer to ascii
+    mov r1, r0              // answer from factorial to convert
+    ldr r0, =outstr         // output string bufer
     bl itoa
 
-// Display our converted number, then exit
-done:
+    // Display answer
     write outstr
 
     // Print newline char
